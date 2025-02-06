@@ -12,7 +12,7 @@ import com.meomeo.thachnnph50584_asm.DBHelper.NNTDB;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText usernameInput, emailInput, passwordInput, fullnameInput;
-    private Button registerButton;
+    private Button registerButton , login;
     private NNTDB db;
 
     @Override
@@ -26,7 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
         passwordInput = findViewById(R.id.passwordInput);
         fullnameInput = findViewById(R.id.fullnameInput);
         registerButton = findViewById(R.id.registerButton);
-
+        login = findViewById(R.id.loginButton);
         registerButton.setOnClickListener(view -> {
             String username = usernameInput.getText().toString();
             String email = emailInput.getText().toString();
@@ -53,5 +53,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+login.setOnClickListener(view ->{
+    startActivity(new Intent(this,LoginActivity.class));
+    finish();
+});
     }
 }

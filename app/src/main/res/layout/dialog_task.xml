@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/etTaskName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên công việc" />
+
+    <EditText
+        android:id="@+id/etTaskContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Mô tả công việc"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/etTaskStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Trạng thái (0,1,2,-1)"
+        android:inputType="number"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/etTaskStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ngày bắt đầu (yyyy-MM-dd)"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/etTaskEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ngày kết thúc (yyyy-MM-dd)"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>

@@ -13,6 +13,18 @@
         android:theme="@style/Theme.Thachnnph50584_Asm"
         tools:targetApi="31">
         <activity
+            android:name=".EditAbout"
+            android:exported="false" />
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".forgot_password_activity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
