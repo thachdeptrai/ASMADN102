@@ -20,7 +20,7 @@ public class EditAbout  extends AppCompatActivity {
     private EditText etMSSV, etName, etClass, etSubject;
     private ImageView ivStudent;
     private Button btnSave;
-
+private String currentEmail;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +32,7 @@ public class EditAbout  extends AppCompatActivity {
         etSubject = findViewById(R.id.etSubject);
         ivStudent = findViewById(R.id.ivStudent);
         btnSave = findViewById(R.id.btnSave);
-
+        currentEmail = getIntent().getStringExtra("currentUsername2");
         loadAboutInfo();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -46,8 +46,8 @@ public class EditAbout  extends AppCompatActivity {
     private void loadAboutInfo(){
         NNTDB dbHelper = new NNTDB(this);
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        String query = "SELECT * FROM " + NNTDB.TABLE_ABOUT + " LIMIT 1";
-        Cursor cursor = database.rawQuery(query, null);
+        String query = "SELECT * FROM " + NNTDB.TABLE_ABOUT +  " WHERE " + NNTDB.COLUMN_USER_USERNAME +" = ? LIMIT 1";
+        Cursor cursor = database.rawQuery(query,  new String[]{ currentEmail });
         if(cursor.moveToFirst()){
             try {
                 String mssv = cursor.getString(cursor.getColumnIndexOrThrow(NNTDB.COLUMN_MSSV));
@@ -60,7 +60,9 @@ public class EditAbout  extends AppCompatActivity {
                 etName.setText(fullname);
                 etClass.setText(className);
                 etSubject.setText(subject);
-
+                if (TextUtils.isEmpty(image)) {
+                    image = "baseline_account_circle_24";
+                }
                 int imageRes = getResources().getIdentifier(image, "drawable", getPackageName());
                 if(imageRes != 0){
                     ivStudent.setImageResource(imageRes);
@@ -79,9 +81,7 @@ public class EditAbout  extends AppCompatActivity {
         String fullname = etName.getText().toString().trim();
         String className = etClass.getText().toString().trim();
         String subject = etSubject.getText().toString().trim();
-        // Giả sử image mặc định, hoặc có thể cho phép người dùng chọn ảnh
         String image = "baseline_account_circle_24";
-
         if(TextUtils.isEmpty(mssv) || TextUtils.isEmpty(fullname) ||
                 TextUtils.isEmpty(className) || TextUtils.isEmpty(subject)){
             Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
@@ -89,7 +89,7 @@ public class EditAbout  extends AppCompatActivity {
         }
 
         NNTDB dbHelper = new NNTDB(this);
-        boolean result = dbHelper.updateAbout(mssv, fullname, className, subject, image);
+        boolean result = dbHelper.updateAbout(currentEmail,mssv, fullname, className, subject, image);
         if(result){
             Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
             finish();

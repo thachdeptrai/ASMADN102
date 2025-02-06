@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.meomeo.thachnnph50584_asm.Model.Task;
+
 public class NNTDB extends SQLiteOpenHelper {
 
     // --- Bảng USERS ---
@@ -21,7 +23,7 @@ public class NNTDB extends SQLiteOpenHelper {
     public static final String COLUMN_TASK_ID = "id";
     public static final String COLUMN_TASK_NAME = "name";
     public static final String COLUMN_TASK_CONTENT = "content";
-    public static final String COLUMN_TASK_STATUS = "status";    // 0: Mới tạo, 1: Đang làm, 2: Hoàn thành, -1: Xóa
+    public static final String COLUMN_TASK_STATUS = "status";    // 0: mới tạo, 1: đang làm, 2: hoàn thành, -1: xóa
     public static final String COLUMN_TASK_START = "start_date";
     public static final String COLUMN_TASK_END = "end_date";
 
@@ -29,14 +31,15 @@ public class NNTDB extends SQLiteOpenHelper {
     public static final String TABLE_ABOUT = "about";
     public static final String COLUMN_ABOUT_ID = "id";
     public static final String COLUMN_MSSV = "mssv";
-
     public static final String COLUMN_FULLNAME_ABOUT = "fullname_about";
     public static final String COLUMN_CLASS = "class_name";
     public static final String COLUMN_SUBJECT = "subject";
     public static final String COLUMN_IMAGE = "image";
+    // Cột khóa ngoại để liên kết với bảng USERS (dựa vào username)
+    public static final String COLUMN_USER_USERNAME = "user_username";
 
     private static final String DATABASE_NAME = "NNT_DB";
-    private static final int DATABASE_VERSION = 4; // cập nhật phiên bản lên 2
+    private static final int DATABASE_VERSION = 8; // Tăng version để cập nhật schema
 
     public NNTDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -44,6 +47,7 @@ public class NNTDB extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // Tạo bảng USERS
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + " (" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_USERNAME + " TEXT UNIQUE, " +
@@ -52,15 +56,16 @@ public class NNTDB extends SQLiteOpenHelper {
                 COLUMN_FULLNAME + " TEXT)";
         db.execSQL(CREATE_USERS_TABLE);
 
+        // Insert 1 tài khoản mẫu vào USERS
         String INSERT_USERS = "INSERT INTO " + TABLE_USERS + " (" +
                 COLUMN_USERNAME + ", " +
                 COLUMN_EMAIL + ", " +
                 COLUMN_PASSWORD + ", " +
-                COLUMN_FULLNAME  +
-                ") " +
-                "VALUES ('thach', 'thach@gmail.com', 'thach', 'thach')";
+                COLUMN_FULLNAME +
+                ") VALUES ('thach', 'thach@gmail.com', 'thach', 'thach')";
         db.execSQL(INSERT_USERS);
 
+        // Tạo bảng TASK
         String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASK + " (" +
                 COLUMN_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_TASK_NAME + " TEXT, " +
@@ -70,6 +75,7 @@ public class NNTDB extends SQLiteOpenHelper {
                 COLUMN_TASK_END + " TEXT)";
         db.execSQL(CREATE_TASK_TABLE);
 
+        // Tạo bảng ABOUT với cột khóa ngoại user_username tham chiếu đến users(username)
         String CREATE_ABOUT_TABLE = "CREATE TABLE " + TABLE_ABOUT + " (" +
                 COLUMN_ABOUT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_MSSV + " TEXT, " +
@@ -77,37 +83,31 @@ public class NNTDB extends SQLiteOpenHelper {
                 COLUMN_CLASS + " TEXT, " +
                 COLUMN_SUBJECT + " TEXT, " +
                 COLUMN_IMAGE + " TEXT, " +
-                COLUMN_USERNAME + " TEXT, " +
-                "FOREIGN KEY(" + COLUMN_USERNAME + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USERNAME + "))";
+                COLUMN_USER_USERNAME + " TEXT, " +
+                "FOREIGN KEY(" + COLUMN_USER_USERNAME + ") REFERENCES " + TABLE_USERS + "(" + COLUMN_USERNAME + "))";
         db.execSQL(CREATE_ABOUT_TABLE);
 
-
         String INSERT_ABOUT = "INSERT INTO " + TABLE_ABOUT + " (" +
+                COLUMN_USER_USERNAME + ", " +
                 COLUMN_MSSV + ", " +
                 COLUMN_FULLNAME_ABOUT + ", " +
                 COLUMN_CLASS + ", " +
                 COLUMN_SUBJECT + ", " +
-                COLUMN_IMAGE + ", " +
-                COLUMN_USERNAME +
-                ") " +
-                "VALUES ('PH12345', 'Nguyễn Văn A', 'CNTT1', 'Lập trình Android', 'default_image_path', 'thach')";
+                COLUMN_IMAGE +
+                ") SELECT " + COLUMN_USERNAME + ", NULL, NULL, NULL, NULL, NULL " +
+                "FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + " = 'thach'";
         db.execSQL(INSERT_ABOUT);
-
     }
 
-        // Cập nhật lại cấu trúc bảng khi DATABASE_VERSION tăng lên
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Thực hiện xóa các bảng cũ nếu tồn tại và tạo lại
+        // Xóa bảng cũ và tạo lại bảng mới
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TASK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ABOUT);
         onCreate(db);
     }
 
-    // --- Các phương thức hỗ trợ xử lý dữ liệu ---
-
-    // Kiểm tra xem có user nào trong bảng không
     public boolean hasUser() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_USERS, null);
@@ -117,7 +117,6 @@ public class NNTDB extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    // Kiểm tra username và email có tồn tại không
     public boolean checkUser(String username, String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE_USERS + " WHERE " + COLUMN_USERNAME + "=? AND " + COLUMN_EMAIL + "=?";
@@ -128,7 +127,6 @@ public class NNTDB extends SQLiteOpenHelper {
         return exists;
     }
 
-    // Cập nhật mật khẩu cho user theo username
     public boolean updatePassword(String username, String newPassword) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -137,7 +135,8 @@ public class NNTDB extends SQLiteOpenHelper {
         db.close();
         return rows > 0;
     }
-    public boolean updateAbout(String mssv, String fullname, String className, String subject, String image) {
+
+    public boolean updateAbout(String username, String mssv, String fullname, String className, String subject, String image) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_MSSV, mssv);
@@ -145,9 +144,41 @@ public class NNTDB extends SQLiteOpenHelper {
         values.put(COLUMN_CLASS, className);
         values.put(COLUMN_SUBJECT, subject);
         values.put(COLUMN_IMAGE, image);
-        // Giả sử luôn cập nhật dòng có id = 1
-        int rows = db.update(TABLE_ABOUT, values, COLUMN_ABOUT_ID + " = ?", new String[]{"1"});
+        int rows = db.update(TABLE_ABOUT, values, COLUMN_USER_USERNAME + " = ?", new String[]{ username });
         db.close();
         return rows > 0;
+    }
+    // Phương thức thêm task
+    public long insertTask(Task task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TASK_NAME, task.getName());
+        values.put(COLUMN_TASK_CONTENT, task.getContent());
+        values.put(COLUMN_TASK_STATUS, task.getStatus());
+        values.put(COLUMN_TASK_START, task.getStart());
+        values.put(COLUMN_TASK_END, task.getEnd());
+        long id = db.insert(TABLE_TASK, null, values);
+        db.close();
+        return id;
+    }
+    // Phương thức cập nhật task
+    public int updateTask(Task task) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TASK_NAME, task.getName());
+        values.put(COLUMN_TASK_CONTENT, task.getContent());
+        values.put(COLUMN_TASK_STATUS, task.getStatus());
+        values.put(COLUMN_TASK_START, task.getStart());
+        values.put(COLUMN_TASK_END, task.getEnd());
+        int rows = db.update(TABLE_TASK, values, COLUMN_TASK_ID + "=?", new String[]{ String.valueOf(task.getId()) });
+        db.close();
+        return rows;
+    }
+    // Phương thức xóa task
+    public int deleteTask(int taskId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_TASK, COLUMN_TASK_ID + "=?", new String[]{ String.valueOf(taskId) });
+        db.close();
+        return rows;
     }
 }

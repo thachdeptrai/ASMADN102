@@ -13,6 +13,12 @@
         android:theme="@style/Theme.Thachnnph50584_Asm"
         tools:targetApi="31">
         <activity
+            android:name=".EditTaskActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddTaskActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditAbout"
             android:exported="false" />
         <activity

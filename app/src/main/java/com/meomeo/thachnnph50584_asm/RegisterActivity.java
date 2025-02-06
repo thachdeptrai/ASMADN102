@@ -45,7 +45,20 @@ public class RegisterActivity extends AppCompatActivity {
 
                 long result = database.insert("users", null, values);
                 if (result != -1) {
-                    Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                    ContentValues aboutValues = new ContentValues();
+                    aboutValues.put("user_username", username);
+                    // aboutValues.put("mssv", "");
+                    // aboutValues.put("fullname_about", "");
+                    // aboutValues.put("class_name", "");
+                    // aboutValues.put("subject", "");
+                    // aboutValues.put("image", "");
+
+                    long aboutResult = database.insert("about", null, aboutValues);
+                    if (aboutResult == -1) {
+                        Toast.makeText(this, "Đăng ký thành công, nhưng lưu thông tin About thất bại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                    }
                     startActivity(new Intent(this, LoginActivity.class));
                     finish();
                 } else {

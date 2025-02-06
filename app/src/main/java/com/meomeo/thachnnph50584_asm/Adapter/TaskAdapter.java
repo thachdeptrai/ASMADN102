@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,10 +18,16 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     private List<Task> tasks;
     private Context context;
+    private OnTaskActionListener listener;
 
-    public TaskAdapter(Context context, List<Task> tasks) {
+    public interface OnTaskActionListener {
+        void onEdit(Task task);
+        void onDelete(Task task);
+    }
+    public TaskAdapter(Context context, List<Task> tasks,OnTaskActionListener listener) {
         this.context = context;
         this.tasks = tasks;
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,8 +40,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = tasks.get(position);
-        holder.tvName.setText(task.getName());
-        holder.tvContent.setText(task.getContent());
+        holder.tvTaskName.setText(task.getName());
+        holder.tvTaskContent.setText(task.getContent());
         // Chuyển trạng thái thành text
         String statusText;
         switch (task.getStatus()) {
@@ -53,9 +60,28 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             default:
                 statusText = "Không xác định";
         }
-        holder.tvStatus.setText(statusText);
-        holder.tvStart.setText("Bắt đầu: " + task.getStart());
-        holder.tvEnd.setText("Kết thúc: " + task.getEnd());
+        holder.tvTaskName.setText(task.getName());
+        holder.tvTaskStatus.setText(statusText);
+        holder.tvTaskContent.setText(task.getContent());
+        holder.tvTaskTime.setText("Bắt đầu: " + task.getStart() + "  -  Kết thúc: " + task.getEnd());
+        holder.btnEditTask.setTag(task.getId());
+        holder.btnDeleteTask.setTag(task.getId());
+
+        // Sự kiện click edit
+        holder.btnEditTask.setOnClickListener(v -> {
+            // Lấy id từ tag của nút
+            int id = (int) v.getTag();
+            if (listener != null) {
+                listener.onEdit(task);
+            }
+        });
+        // Sự kiện click delete
+        holder.btnDeleteTask.setOnClickListener(v -> {
+            int id = (int) v.getTag();
+            if (listener != null) {
+                listener.onDelete(task);
+            }
+        });
     }
 
     @Override
@@ -64,15 +90,16 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvContent, tvStatus, tvStart, tvEnd;
-
+        TextView tvTaskName, tvTaskContent, tvTaskTime, tvTaskStatus;
+        ImageButton btnEditTask, btnDeleteTask;
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.tvTaskName);
-            tvContent = itemView.findViewById(R.id.tvTaskContent);
-            tvStatus = itemView.findViewById(R.id.tvTaskStatus);
-            tvStart = itemView.findViewById(R.id.tvTaskStart);
-            tvEnd = itemView.findViewById(R.id.tvTaskEnd);
+            tvTaskName = itemView.findViewById(R.id.tvTaskName);
+            tvTaskContent = itemView.findViewById(R.id.tvTaskContent);
+            tvTaskStatus = itemView.findViewById(R.id.tvTaskStatus);
+            tvTaskTime = itemView.findViewById(R.id.tvTaskTime);
+            btnEditTask = itemView.findViewById(R.id.btnEditTask);
+            btnDeleteTask = itemView.findViewById(R.id.btnDeleteTask);
         }
     }
 }
