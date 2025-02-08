@@ -69,7 +69,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         // Sự kiện click edit
         holder.btnEditTask.setOnClickListener(v -> {
-            // Lấy id từ tag của nút
             int id = (int) v.getTag();
             if (listener != null) {
                 listener.onEdit(task);
