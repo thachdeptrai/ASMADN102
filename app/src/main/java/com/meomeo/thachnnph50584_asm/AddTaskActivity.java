@@ -1,12 +1,16 @@
 package com.meomeo.thachnnph50584_asm;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +26,7 @@ public class AddTaskActivity extends AppCompatActivity {
     private EditText etTaskName, etTaskContent, etStartDate, etEndDate;
     private Button btnSave;
     private NNTDB dbHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 database.close();
                 if(result != -1){
                     Toast.makeText(AddTaskActivity.this, "Thêm task thành công", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(AddTaskActivity.this, HomeActivity.class));
                     finish();
                 } else {
                     Toast.makeText(AddTaskActivity.this, "Thêm task thất bại", Toast.LENGTH_SHORT).show();
@@ -68,7 +74,7 @@ public class AddTaskActivity extends AppCompatActivity {
         final Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(AddTaskActivity.this,
                 (view, year, month, dayOfMonth) -> {
-                    // Lưu ý: tháng được trả về từ 0, vì vậy cần +1
+                    //tháng được trả về từ 0, vì vậy cần +1
                     String date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
                     editText.setText(date);
                 },

@@ -22,12 +22,7 @@
             android:layout_height="wrap_content"
             android:hint="Nội dung công việc"
             android:layout_marginTop="8dp"/>
-        <EditText
-            android:id="@+id/etTaskStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Trạng Thái"
-            android:layout_marginTop="8dp"/>
+
         <EditText
             android:id="@+id/etStartDate"
             android:layout_width="match_parent"
@@ -43,7 +38,21 @@
             android:hint="Chọn ngày kết thúc"
             android:focusable="false"
             android:layout_marginTop="8dp"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trạng Thái"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+        <!-- Spinner chọn trạng thái -->
+        <Spinner
+            android:id="@+id/spinnerStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            />
         <Button
             android:id="@+id/btnUpdateTask"
             android:layout_width="wrap_content"

@@ -1,5 +1,6 @@
 package com.meomeo.thachnnph50584_asm;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -91,6 +92,7 @@ private String currentEmail;
         NNTDB dbHelper = new NNTDB(this);
         boolean result = dbHelper.updateAbout(currentEmail,mssv, fullname, className, subject, image);
         if(result){
+            startActivity(new Intent(EditAbout.this, HomeActivity.class));
             Toast.makeText(this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
             finish();
         } else {
