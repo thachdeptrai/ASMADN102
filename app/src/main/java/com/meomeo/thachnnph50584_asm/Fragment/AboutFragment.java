@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.meomeo.thachnnph50584_asm.DBHelper.NNTDB;
-import com.meomeo.thachnnph50584_asm.EditAbout;
+import com.meomeo.thachnnph50584_asm.Activity.EditAbout;
 import com.meomeo.thachnnph50584_asm.R;
 
 public class AboutFragment extends Fragment {

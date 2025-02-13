@@ -13,10 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.meomeo.thachnnph50584_asm.AddTaskActivity;
+import com.meomeo.thachnnph50584_asm.Activity.AddTaskActivity;
 import com.meomeo.thachnnph50584_asm.Adapter.TaskAdapter;
 import com.meomeo.thachnnph50584_asm.DBHelper.NNTDB;
-import com.meomeo.thachnnph50584_asm.EditTaskActivity;
+import com.meomeo.thachnnph50584_asm.Activity.EditTaskActivity;
 import com.meomeo.thachnnph50584_asm.Model.Task;
 import com.meomeo.thachnnph50584_asm.R;
 
